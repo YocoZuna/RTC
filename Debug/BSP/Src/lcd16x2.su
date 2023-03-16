@@ -5,4 +5,4 @@
 ../BSP/Src/lcd16x2.c:90:6:lcd_print_string	16	static
 ../BSP/Src/lcd16x2.c:99:6:lcd_set_cursor	16	static
 ../BSP/Src/lcd16x2.c:121:6:lcd_send_char	16	static
-../BSP/Src/lcd16x2.c:131:13:lcd_udelay	24	static
+../BSP/Src/lcd16x2.c:132:13:lcd_udelay	24	static

@@ -51,4 +51,6 @@ void ds1307_set_time(I2C_HandleTypeDef* i2c,DS1307_Time_t* time);
 void ds1307_set_date(I2C_HandleTypeDef* i2c,DS1307_Date_t* date);
 void display_Time(DS1307_Time_t time);
 void display_Date(DS1307_Date_t date);
+void ds1307_convert_time_to_string(DS1307_Time_t* time, char* buffor);
+void convert_number_to_string(uint8_t number, char* buff);
 #endif 

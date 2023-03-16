@@ -1,7 +1,7 @@
 #include "ds1307.h"
 #include <stdio.h>
 #include "main.h"
-
+#include <stdlib.h>
 void ds1307_init(I2C_HandleTypeDef* i2c);
 void ds1307_get_time(I2C_HandleTypeDef* i2c,DS1307_Time_t* getTime);
 void ds1307_get_date(I2C_HandleTypeDef* i2c,DS1307_Date_t* date);
@@ -9,6 +9,8 @@ void ds1307_set_time(I2C_HandleTypeDef* i2c,DS1307_Time_t* time);
 void ds1307_set_date(I2C_HandleTypeDef* i2c,DS1307_Date_t* date);
 void display_Time(DS1307_Time_t time);
 void display_Date(DS1307_Date_t date);
+void ds1307_convert_time_to_string(DS1307_Time_t* time, char* buffor);
+void convert_number_to_string(uint8_t number, char* buff);
 static uint8_t bcd_to_bin(uint8_t value);
 static uint8_t bin_to_bcd(uint8_t value);
 
@@ -16,6 +18,7 @@ static uint8_t bin_to_bcd(uint8_t value);
 
 #ifdef debug
 	extern void initialise_monitor_handles(void);
+	#define DEBUG_INFO(__FORMAT,...) printf("Debug info: " __FORMAT ,##__VA_ARGS__)
 #endif
 
 void ds1307_init(I2C_HandleTypeDef* i2c)
@@ -28,7 +31,7 @@ void ds1307_init(I2C_HandleTypeDef* i2c)
   if (ds1307Status != HAL_OK)
   {
 #ifdef debug
-	  	  printf("DS1307 failed initialiation\n");
+	  	  DEBUG_INFO("DS1307 failed initialiation\n");
 #endif
   }
 
@@ -144,7 +147,39 @@ void ds1307_get_date(I2C_HandleTypeDef* i2c,DS1307_Date_t* date)
 void display_Date(DS1307_Date_t date)
 {
 	#ifdef debug
-			printf("%d  %d.%d.%d\n",date.date,date.day,date.month,date.year);
+			 DEBUG_INFO("%d  %d.%d.%d\n",date.date,date.day,date.month,date.year);
 	#endif
 }
 
+void ds1307_convert_time_to_string(DS1307_Time_t* time, char* buffor)
+{
+	char buff[2];
+	assert_param(sizeof(buffor)==10);
+	convert_number_to_string(time->hrs,buff);
+	buffor[0]=buff[0];
+	buffor[1] =buff[1];
+	buffor[2] = ':';
+	convert_number_to_string(time->min,buff);
+	buffor[3]=buff[0];
+	buffor[4] =buff[1];
+	buffor[5] = ':';
+	convert_number_to_string(time->sec,buff);
+	buffor[6]=buff[0];
+	buffor[7] =buff[1];
+	buffor[8] = '\0';
+}
+
+void convert_number_to_string(uint8_t number, char* buff)
+{
+
+	if (number < 10)
+	{
+		buff[0] = '0';
+		itoa(number,&buff[1],10);
+	}
+	else
+	{
+		itoa((number%10),&buff[0],10);
+		itoa((number/10),&buff[1],10);
+	}
+}

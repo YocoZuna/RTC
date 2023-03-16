@@ -20,37 +20,37 @@ static void lcd_udelay(uint8_t delay);
 void lcd_send_char(uint8_t cmd);
 void lcd_init(void)
 {
-
+	
 	HAL_Delay(15);
 	lcd_send_4bits(0x3);
     HAL_Delay(5);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_4bits(0x3);
     lcd_udelay(100);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_4bits(0x2);
     // Function set
     HAL_Delay(5);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_cmd(LCD_CMD_4L_2N_5X8F);
     HAL_Delay(5);
     //Display On cursor on
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_cmd(LCD_CMD_DISPLAY_ON_CURSOR_ON);
     HAL_Delay(5);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_cmd(LCD_CMD_DISPLAY_RETURN_HOME);
     // Display clear
     HAL_Delay(5);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_cmd(LCD_DISPLAY_CLEAR);
     HAL_Delay(5);
 
     //Entry mode set cmd
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
+
     lcd_send_cmd(LCD_COM_RAM_INCREMENT);
     HAL_Delay(5);
-    GPIOB->ODR ^=((GPIOB->ODR>>12)<<12); // Cleaning all lines ! very important step
+    //GPIOB->ODR ^=((GPIOB->ODR>>12)<<12); // Cleaning all lines ! very important step
 
 }
 
@@ -66,14 +66,17 @@ void lcd_send_4bits(uint8_t data)
 	lcd_enable();
 	GPIOB->ODR ^= (tmp<<12);
 	*/
+	GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
 	GPIOB->ODR |= (((data>>0)&0x1)<<12);
 	GPIOB->ODR |= (((data>>1)&0x1)<<13);
 	GPIOB->ODR |= (((data>>2)&0x1)<<14);
 	GPIOB->ODR |= (((data>>3)&0x1)<<15);
 	lcd_enable();
+	GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
 }
 void lcd_send_cmd(uint8_t cmd)
 {
+	
 	HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, RESET);
 	HAL_GPIO_WritePin(RW_GPIO_Port, RW_Pin, RESET);
 	lcd_send_4bits(cmd>>4);
@@ -125,6 +128,7 @@ void lcd_send_char(uint8_t cmd)
 	HAL_GPIO_WritePin(RW_GPIO_Port, RW_Pin, RESET);
 
 	lcd_send_4bits(cmd>>4);
+
 	GPIOB->ODR ^=((GPIOB->ODR>>12)<<12);
 	lcd_send_4bits(cmd&0x0F);
 }

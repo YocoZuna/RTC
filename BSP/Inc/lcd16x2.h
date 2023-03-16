@@ -1,5 +1,5 @@
-#ifndef INC_LCD16X2_H_
-#define INC_LCD16X2_H_
+#ifndef BSP_INC_LCD16X2_H_
+#define BSP_INC_LCD16X2_H_
 
 #include "main.h"
 #include <stdint.h>
